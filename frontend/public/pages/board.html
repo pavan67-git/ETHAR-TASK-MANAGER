@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Board — TaskFlow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/main.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="app-page">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <span class="logo-text">TaskFlow</span>
+      </div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/pages/dashboard.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+      <a href="/pages/projects.html" class="nav-item active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg><span>Projects</span></a>
+      <a href="/pages/my-tasks.html" class="nav-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg><span>My Tasks</span></a>
+      <a href="/pages/team.html" class="nav-item admin-only hidden"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span>Team</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card"><div class="user-avatar" id="sidebar-avatar">--</div><div class="user-info"><p class="user-name" id="sidebar-name">Loading...</p><p class="user-role" id="sidebar-role">member</p></div></div>
+      <button class="btn-logout" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+        <div>
+          <div class="breadcrumb"><a href="/pages/projects.html">Projects</a> <span>›</span> <span id="board-project-name">Loading...</span></div>
+          <h1 class="page-title" id="board-title">Project Board</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="project-members" id="board-members"></div>
+        <button class="btn-secondary" id="manage-members-btn" onclick="openMembersModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Members
+        </button>
+        <button class="btn-primary" onclick="openTaskModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Task
+        </button>
+      </div>
+    </header>
+
+    <!-- Kanban Board -->
+    <div class="kanban-container" id="kanban-board">
+      <div class="kanban-col" id="col-todo">
+        <div class="kanban-col-header">
+          <div class="col-title-row">
+            <span class="col-dot" style="background:#94a3b8"></span>
+            <h3>To Do</h3>
+            <span class="col-count" id="count-todo">0</span>
+          </div>
+          <button class="col-add-btn" onclick="openTaskModal('todo')" title="Add task">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="kanban-cards" id="cards-todo" ondragover="allowDrop(event)" ondrop="dropTask(event,'todo')"></div>
+      </div>
+      <div class="kanban-col" id="col-in-progress">
+        <div class="kanban-col-header">
+          <div class="col-title-row">
+            <span class="col-dot" style="background:#6366f1"></span>
+            <h3>In Progress</h3>
+            <span class="col-count" id="count-in-progress">0</span>
+          </div>
+          <button class="col-add-btn" onclick="openTaskModal('in-progress')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="kanban-cards" id="cards-in-progress" ondragover="allowDrop(event)" ondrop="dropTask(event,'in-progress')"></div>
+      </div>
+      <div class="kanban-col" id="col-review">
+        <div class="kanban-col-header">
+          <div class="col-title-row">
+            <span class="col-dot" style="background:#f59e0b"></span>
+            <h3>In Review</h3>
+            <span class="col-count" id="count-review">0</span>
+          </div>
+          <button class="col-add-btn" onclick="openTaskModal('review')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="kanban-cards" id="cards-review" ondragover="allowDrop(event)" ondrop="dropTask(event,'review')"></div>
+      </div>
+      <div class="kanban-col" id="col-done">
+        <div class="kanban-col-header">
+          <div class="col-title-row">
+            <span class="col-dot" style="background:#10b981"></span>
+            <h3>Done</h3>
+            <span class="col-count" id="count-done">0</span>
+          </div>
+          <button class="col-add-btn" onclick="openTaskModal('done')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
+        </div>
+        <div class="kanban-cards" id="cards-done" ondragover="allowDrop(event)" ondrop="dropTask(event,'done')"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Task Create/Edit Modal -->
+  <div class="modal-overlay hidden" id="task-modal-overlay" onclick="closeTaskModal(event)">
+    <div class="modal modal-lg" id="task-modal">
+      <div class="modal-header">
+        <h3 id="task-modal-title">Create Task</h3>
+        <button class="modal-close" onclick="closeTaskModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <form id="task-form" onsubmit="handleTaskSubmit(event)" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="task-title">Task Title *</label>
+            <input type="text" id="task-title" placeholder="What needs to be done?" required maxlength="200" />
+          </div>
+          <div class="form-group">
+            <label for="task-desc">Description</label>
+            <textarea id="task-desc" placeholder="Add details about this task..." rows="3" maxlength="2000"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="task-status">Status</label>
+              <select id="task-status">
+                <option value="todo">To Do</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">In Review</option>
+                <option value="done">Done</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="task-priority">Priority</label>
+              <select id="task-priority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+                <option value="critical">Critical</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="task-assignee">Assignee</label>
+              <select id="task-assignee"><option value="">Unassigned</option></select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="task-due">Due Date</label>
+              <input type="date" id="task-due" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="task-hours">Estimated Hours</label>
+            <input type="number" id="task-hours" placeholder="e.g. 4" min="0" max="1000" step="0.5" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="closeTaskModal()">Cancel</button>
+          <button type="submit" class="btn-primary" id="task-submit-btn">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Task Detail Modal -->
+  <div class="modal-overlay hidden" id="task-detail-overlay" onclick="closeTaskDetail(event)">
+    <div class="modal modal-lg" id="task-detail-modal">
+      <div class="modal-header">
+        <div class="task-detail-badges" id="detail-badges"></div>
+        <button class="modal-close" onclick="closeTaskDetail()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="modal-body" id="task-detail-body">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Members Modal -->
+  <div class="modal-overlay hidden" id="members-modal-overlay" onclick="closeMembersModal(event)">
+    <div class="modal" id="members-modal">
+      <div class="modal-header">
+        <h3>Project Members</h3>
+        <button class="modal-close" onclick="closeMembersModal()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="member-search-row">
+          <input type="text" id="member-search-input" placeholder="Search by name or email..." oninput="searchUsers(this.value)" />
+        </div>
+        <div class="user-search-results hidden" id="user-search-results"></div>
+        <div class="members-list" id="members-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/board.js"></script>
+</body>
+</html>
